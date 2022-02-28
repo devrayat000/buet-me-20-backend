@@ -9,7 +9,7 @@
     "dev": "keystone dev",
     "start": "keystone start",
     "devstart": "cross-env SESSION_SECRET='---DEV-COOKIE-SECRET--CHANGE-ME---' keystone start",
-    "build": "keystone build",
+    "build": "keystone build && keystone prisma migrate deploy",
     "postinstall": "keystone postinstall"
   },
   "dependencies": {
