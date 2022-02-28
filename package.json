@@ -7,7 +7,8 @@
   "license": "MIT",
   "scripts": {
     "dev": "keystone dev",
-    "start": "cross-env SESSION_SECRET='---DEV-COOKIE-SECRET--CHANGE-ME---' keystone start",
+    "start": "keystone start",
+    "devstart": "cross-env SESSION_SECRET='---DEV-COOKIE-SECRET--CHANGE-ME---' keystone start",
     "build": "keystone build",
     "postinstall": "keystone postinstall"
   },
