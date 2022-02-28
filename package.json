@@ -9,8 +9,9 @@
     "dev": "keystone dev",
     "start": "keystone start",
     "devstart": "cross-env SESSION_SECRET='---DEV-COOKIE-SECRET--CHANGE-ME---' keystone start",
-    "build": "keystone build && keystone prisma migrate deploy",
-    "postinstall": "keystone postinstall"
+    "build": "keystone build && keystone prisma migrate deploy --schema=./schema.prisma",
+    "postinstall": "keystone postinstall",
+    "migrate:new": "keystone prisma migrate deploy"
   },
   "dependencies": {
     "@keystone-6/auth": "^1.0.1",
