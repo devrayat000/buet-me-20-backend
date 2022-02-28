@@ -13,6 +13,7 @@ import { lists } from "./schema";
 
 // Keystone auth is configured separately - check out the basic auth setup we are importing from our auth file.
 import { withAuth, session } from "./auth";
+import { CORS_ORIGIN, PORT } from "./config";
 
 export default withAuth(
   // Using the config function helps typescript guide you to the available options.
@@ -30,10 +31,12 @@ export default withAuth(
     lists,
     session,
     server: {
-      port: 3001,
+      port: PORT,
       cors: {
-        origin: "*",
+        origin: CORS_ORIGIN,
       },
     },
   })
 );
+
+// https://heroku.com/deploy?template=https://github.com/keystonejs/keystone-6-heroku-example

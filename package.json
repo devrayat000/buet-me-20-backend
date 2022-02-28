@@ -2,6 +2,9 @@
   "name": "keystone-app",
   "version": "1.0.0",
   "private": true,
+  "repository": "git@github.com:devrayat000/buet-me-20-backend.git",
+  "author": "Zul Ikram Musaddik Rayat <2010050@me.buet.ac.bd>",
+  "license": "MIT",
   "scripts": {
     "dev": "keystone dev",
     "start": "cross-env SESSION_SECRET='---DEV-COOKIE-SECRET--CHANGE-ME---' keystone start",
