@@ -22,9 +22,9 @@ export default withAuth(
     db: {
       provider: "postgresql",
       url: DATABASE_URL,
-      onConnect: async (context) => {
-        /* ... */
-      },
+      // onConnect: async (context) => {
+      //   /* ... */
+      // },
       // Optional advanced configuration
       enableLogging: true,
       useMigrations: true,

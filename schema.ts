@@ -125,7 +125,18 @@ export const lists: Lists = {
           length: { min: 5 },
         },
       }),
+      phone: text({
+        isIndexed: "unique",
+        validation: {
+          isRequired: true,
+          length: { min: 11, max: 11 },
+          match: { regex: /01\d{9}/ },
+        },
+      }),
       photo: image(),
+      facebook: text({
+        db: { isNullable: true },
+      }),
     },
   }),
 };

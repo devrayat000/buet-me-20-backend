@@ -37,12 +37,14 @@ model Student {
   studentId       String  @unique @default("")
   email           String  @unique @default("")
   name            String  @default("")
+  phone           String  @unique @default("")
   photo_filesize  Int?
   photo_extension String?
   photo_width     Int?
   photo_height    Int?
   photo_mode      String?
   photo_id        String?
+  facebook        String?
 }
 
 enum TodoTypeType {

@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Student" ALTER COLUMN "facebook" DROP NOT NULL,
+ALTER COLUMN "facebook" DROP DEFAULT;
