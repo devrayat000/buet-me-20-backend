@@ -15,6 +15,10 @@ import { lists } from "./schema";
 import { withAuth, session } from "./auth";
 import { CORS_ORIGIN, DATABASE_URL, PORT } from "./config";
 
+// TODO: Custom Logo
+// TODO: Redis session store
+// TODO: Revise access-control
+
 export default withAuth(
   // Using the config function helps typescript guide you to the available options.
   config({

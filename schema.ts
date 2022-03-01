@@ -35,6 +35,7 @@ import {
 // our types to a stricter subset that is type-aware of other lists in our schema
 // that Typescript cannot easily infer.
 import { Lists } from ".keystone/types";
+import { isAdmin, isAdminOrModerator, isAdminOrPerson } from "./hooks/admin";
 
 // We have a users list, a blogs list, and tags for blog posts, so they can be filtered.
 // Each property on the exported object will become the name of a list (a.k.a. the `listKey`),
@@ -42,17 +43,60 @@ import { Lists } from ".keystone/types";
 export const lists: Lists = {
   // Here we define the user list.
   User: list({
+    access: {
+      operation: {
+        create: isAdmin,
+        delete: isAdmin,
+        // update: isAdminOrModerator,
+      },
+      item: {
+        update: isAdminOrPerson,
+      },
+    },
     // Here are the fields that `User` will have. We want an email and password so they can log in
     // a name so we can refer to them, and a way to connect users to posts.
     fields: {
-      name: text({ validation: { isRequired: true } }),
+      name: text({
+        access: {
+          update: isAdminOrPerson,
+          read: isAdminOrModerator,
+        },
+        validation: { isRequired: true },
+      }),
       email: text({
+        access: {
+          update: isAdminOrPerson,
+          read: isAdminOrModerator,
+        },
         validation: { isRequired: true },
         isIndexed: "unique",
         isFilterable: true,
       }),
       // The password field takes care of hiding details and hashing values
-      password: password({ validation: { isRequired: true } }),
+      password: password({
+        access: {
+          update: isAdminOrPerson,
+          read: isAdmin,
+        },
+        validation: { isRequired: true },
+      }),
+      role: select({
+        access: {
+          update: isAdmin,
+          read: isAdminOrModerator,
+        },
+        type: "enum",
+        options: [
+          {
+            label: "Admin",
+            value: "admin",
+          },
+          {
+            label: "Moderator",
+            value: "moderator",
+          },
+        ],
+      }),
       // Relationships allow us to reference other lists. In this case,
       // we want a user to have many posts, and we are saying that the user
       // should be referencable by the 'author' field of posts.
@@ -62,7 +106,7 @@ export const lists: Lists = {
     // Here we can configure the Admin UI. We want to show a user's name and posts in the Admin UI
     ui: {
       listView: {
-        initialColumns: ["name", "email"],
+        initialColumns: ["name", "email", "role"],
       },
     },
   }),
