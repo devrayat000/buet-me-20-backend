@@ -21,15 +21,14 @@ import { list } from "@keystone-6/core";
 // for the full list of fields.
 import {
   text,
-  relationship,
   password,
   timestamp,
   select,
+  image,
 } from "@keystone-6/core/fields";
 // The document field is a more complicated field, so it's in its own package
 // Keystone aims to have all the base field types, but you can make your own
 // custom ones.
-import { document } from "@keystone-6/fields-document";
 
 // We are using Typescript, and we want our types experience to be as strict as it can be.
 // By providing the Keystone generated `Lists` type to our lists object, we refine
@@ -58,90 +57,19 @@ export const lists: Lists = {
       // we want a user to have many posts, and we are saying that the user
       // should be referencable by the 'author' field of posts.
       // Make sure you read the docs to understand how they work: https://keystonejs.com/docs/guides/relationships#understanding-relationships
-      posts: relationship({ ref: "Post.author", many: true }),
+      // posts: relationship({ ref: "Post.author", many: true }),
     },
     // Here we can configure the Admin UI. We want to show a user's name and posts in the Admin UI
     ui: {
       listView: {
-        initialColumns: ["name", "posts"],
+        initialColumns: ["name", "email"],
       },
-    },
-  }),
-  // Our second list is the Posts list. We've got a few more fields here
-  // so we have all the info we need for displaying posts.
-  Post: list({
-    fields: {
-      title: text(),
-      // Having the status here will make it easy for us to choose whether to display
-      // posts on a live site.
-      status: select({
-        options: [
-          { label: "Published", value: "published" },
-          { label: "Draft", value: "draft" },
-        ],
-        // We want to make sure new posts start off as a draft when they are created
-        defaultValue: "draft",
-        // fields also have the ability to configure their appearance in the Admin UI
-        ui: {
-          displayMode: "segmented-control",
-        },
-      }),
-      // The document field can be used for making highly editable content. Check out our
-      // guide on the document field https://keystonejs.com/docs/guides/document-fields#how-to-use-document-fields
-      // for more information
-      content: document({
-        formatting: true,
-        layouts: [
-          [1, 1],
-          [1, 1, 1],
-          [2, 1],
-          [1, 2],
-          [1, 2, 1],
-        ],
-        links: true,
-        dividers: true,
-      }),
-      publishDate: timestamp(),
-      // Here is the link from post => author.
-      // We've configured its UI display quite a lot to make the experience of editing posts better.
-      author: relationship({
-        ref: "User.posts",
-        ui: {
-          displayMode: "cards",
-          cardFields: ["name", "email"],
-          inlineEdit: { fields: ["name", "email"] },
-          linkToItem: true,
-          inlineCreate: { fields: ["name", "email"] },
-        },
-      }),
-      // We also link posts to tags. This is a many <=> many linking.
-      tags: relationship({
-        ref: "Tag.posts",
-        ui: {
-          displayMode: "cards",
-          cardFields: ["name"],
-          inlineEdit: { fields: ["name"] },
-          linkToItem: true,
-          inlineConnect: true,
-          inlineCreate: { fields: ["name"] },
-        },
-        many: true,
-      }),
-    },
-  }),
-  // Our final list is the tag list. This field is just a name and a relationship to posts
-  Tag: list({
-    ui: {
-      isHidden: true,
-    },
-    fields: {
-      name: text(),
-      posts: relationship({ ref: "Post.tags", many: true }),
     },
   }),
   Todo: list({
     fields: {
       type: select({
+        type: "enum",
         options: [
           {
             label: "CT",
@@ -158,7 +86,7 @@ export const lists: Lists = {
       due: timestamp(),
     },
   }),
-  Notification: list({
+  Announcement: list({
     fields: {
       title: text({ validation: { isRequired: true } }),
       created: timestamp({ defaultValue: { kind: "now" } }),
@@ -167,6 +95,37 @@ export const lists: Lists = {
       listView: {
         initialColumns: ["title"],
       },
+    },
+  }),
+  Student: list({
+    fields: {
+      studentId: text({
+        validation: {
+          isRequired: true,
+          length: { max: 7, min: 7 },
+          match: {
+            regex: /2010(?<roll>[0][0-9][0-9]|[1][0-7][0-9]|[1][8][0])/,
+          },
+        },
+        isIndexed: "unique",
+      }),
+      email: text({
+        validation: {
+          isRequired: true,
+          match: {
+            regex:
+              /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/,
+          },
+        },
+        isIndexed: "unique",
+      }),
+      name: text({
+        validation: {
+          isRequired: true,
+          length: { min: 5 },
+        },
+      }),
+      photo: image(),
     },
   }),
 };

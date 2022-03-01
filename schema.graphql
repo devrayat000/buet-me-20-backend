@@ -6,13 +6,6 @@ type User {
   name: String
   email: String
   password: PasswordState
-  posts(
-    where: PostWhereInput! = {}
-    orderBy: [PostOrderByInput!]! = []
-    take: Int
-    skip: Int! = 0
-  ): [Post!]
-  postsCount(where: PostWhereInput! = {}): Int
 }
 
 type PasswordState {
@@ -31,7 +24,6 @@ input UserWhereInput {
   id: IDFilter
   name: StringFilter
   email: StringFilter
-  posts: PostManyRelationFilter
 }
 
 input IDFilter {
@@ -56,7 +48,13 @@ input StringFilter {
   contains: String
   startsWith: String
   endsWith: String
+  mode: QueryMode
   not: NestedStringFilter
+}
+
+enum QueryMode {
+  default
+  insensitive
 }
 
 input NestedStringFilter {
@@ -71,12 +69,6 @@ input NestedStringFilter {
   startsWith: String
   endsWith: String
   not: NestedStringFilter
-}
-
-input PostManyRelationFilter {
-  every: PostWhereInput
-  some: PostWhereInput
-  none: PostWhereInput
 }
 
 input UserOrderByInput {
@@ -94,14 +86,6 @@ input UserUpdateInput {
   name: String
   email: String
   password: String
-  posts: PostRelateToManyForUpdateInput
-}
-
-input PostRelateToManyForUpdateInput {
-  disconnect: [PostWhereUniqueInput!]
-  set: [PostWhereUniqueInput!]
-  create: [PostCreateInput!]
-  connect: [PostWhereUniqueInput!]
 }
 
 input UserUpdateArgs {
@@ -113,79 +97,44 @@ input UserCreateInput {
   name: String
   email: String
   password: String
-  posts: PostRelateToManyForCreateInput
 }
 
-input PostRelateToManyForCreateInput {
-  create: [PostCreateInput!]
-  connect: [PostWhereUniqueInput!]
-}
-
-type Post {
+type Todo {
   id: ID!
-  title: String
-  status: String
-  content: Post_content_Document
-  publishDate: DateTime
-  author: User
-  tags(
-    where: TagWhereInput! = {}
-    orderBy: [TagOrderByInput!]! = []
-    take: Int
-    skip: Int! = 0
-  ): [Tag!]
-  tagsCount(where: TagWhereInput! = {}): Int
+  type: TodoTypeType
+  subject: String
+  about: String
+  due: DateTime
 }
 
-type Post_content_Document {
-  document(hydrateRelationships: Boolean! = false): JSON!
+enum TodoTypeType {
+  ct
+  lab
 }
 
 scalar DateTime
   @specifiedBy(url: "https://datatracker.ietf.org/doc/html/rfc3339#section-5.6")
 
-input PostWhereUniqueInput {
+input TodoWhereUniqueInput {
   id: ID
 }
 
-input PostWhereInput {
-  AND: [PostWhereInput!]
-  OR: [PostWhereInput!]
-  NOT: [PostWhereInput!]
+input TodoWhereInput {
+  AND: [TodoWhereInput!]
+  OR: [TodoWhereInput!]
+  NOT: [TodoWhereInput!]
   id: IDFilter
-  title: StringFilter
-  status: StringNullableFilter
-  publishDate: DateTimeNullableFilter
-  author: UserWhereInput
-  tags: TagManyRelationFilter
+  type: TodoTypeTypeNullableFilter
+  subject: StringFilter
+  about: StringFilter
+  due: DateTimeNullableFilter
 }
 
-input StringNullableFilter {
-  equals: String
-  in: [String!]
-  notIn: [String!]
-  lt: String
-  lte: String
-  gt: String
-  gte: String
-  contains: String
-  startsWith: String
-  endsWith: String
-  not: NestedStringNullableFilter
-}
-
-input NestedStringNullableFilter {
-  equals: String
-  in: [String!]
-  notIn: [String!]
-  lt: String
-  lte: String
-  gt: String
-  gte: String
-  contains: String
-  startsWith: String
-  endsWith: String
-  not: NestedStringNullableFilter
+input TodoTypeTypeNullableFilter {
+  equals: TodoTypeType
+  in: [TodoTypeType!]
+  notIn: [TodoTypeType!]
+  not: TodoTypeTypeNullableFilter
 }
 
 input DateTimeNullableFilter {
@@ -199,133 +148,6 @@ input DateTimeNullableFilter {
   not: DateTimeNullableFilter
 }
 
-input TagManyRelationFilter {
-  every: TagWhereInput
-  some: TagWhereInput
-  none: TagWhereInput
-}
-
-input PostOrderByInput {
-  id: OrderDirection
-  title: OrderDirection
-  status: OrderDirection
-  publishDate: OrderDirection
-}
-
-input PostUpdateInput {
-  title: String
-  status: String
-  content: JSON
-  publishDate: DateTime
-  author: UserRelateToOneForUpdateInput
-  tags: TagRelateToManyForUpdateInput
-}
-
-input UserRelateToOneForUpdateInput {
-  create: UserCreateInput
-  connect: UserWhereUniqueInput
-  disconnect: Boolean
-}
-
-input TagRelateToManyForUpdateInput {
-  disconnect: [TagWhereUniqueInput!]
-  set: [TagWhereUniqueInput!]
-  create: [TagCreateInput!]
-  connect: [TagWhereUniqueInput!]
-}
-
-input PostUpdateArgs {
-  where: PostWhereUniqueInput!
-  data: PostUpdateInput!
-}
-
-input PostCreateInput {
-  title: String
-  status: String
-  content: JSON
-  publishDate: DateTime
-  author: UserRelateToOneForCreateInput
-  tags: TagRelateToManyForCreateInput
-}
-
-input UserRelateToOneForCreateInput {
-  create: UserCreateInput
-  connect: UserWhereUniqueInput
-}
-
-input TagRelateToManyForCreateInput {
-  create: [TagCreateInput!]
-  connect: [TagWhereUniqueInput!]
-}
-
-type Tag {
-  id: ID!
-  name: String
-  posts(
-    where: PostWhereInput! = {}
-    orderBy: [PostOrderByInput!]! = []
-    take: Int
-    skip: Int! = 0
-  ): [Post!]
-  postsCount(where: PostWhereInput! = {}): Int
-}
-
-input TagWhereUniqueInput {
-  id: ID
-}
-
-input TagWhereInput {
-  AND: [TagWhereInput!]
-  OR: [TagWhereInput!]
-  NOT: [TagWhereInput!]
-  id: IDFilter
-  name: StringFilter
-  posts: PostManyRelationFilter
-}
-
-input TagOrderByInput {
-  id: OrderDirection
-  name: OrderDirection
-}
-
-input TagUpdateInput {
-  name: String
-  posts: PostRelateToManyForUpdateInput
-}
-
-input TagUpdateArgs {
-  where: TagWhereUniqueInput!
-  data: TagUpdateInput!
-}
-
-input TagCreateInput {
-  name: String
-  posts: PostRelateToManyForCreateInput
-}
-
-type Todo {
-  id: ID!
-  type: String
-  subject: String
-  about: String
-  due: DateTime
-}
-
-input TodoWhereUniqueInput {
-  id: ID
-}
-
-input TodoWhereInput {
-  AND: [TodoWhereInput!]
-  OR: [TodoWhereInput!]
-  NOT: [TodoWhereInput!]
-  id: IDFilter
-  type: StringNullableFilter
-  subject: StringFilter
-  about: StringFilter
-  due: DateTimeNullableFilter
-}
-
 input TodoOrderByInput {
   id: OrderDirection
   type: OrderDirection
@@ -335,7 +157,7 @@ input TodoOrderByInput {
 }
 
 input TodoUpdateInput {
-  type: String
+  type: TodoTypeType
   subject: String
   about: String
   due: DateTime
@@ -347,50 +169,147 @@ input TodoUpdateArgs {
 }
 
 input TodoCreateInput {
-  type: String
+  type: TodoTypeType
   subject: String
   about: String
   due: DateTime
 }
 
-type Notification {
+type Announcement {
   id: ID!
   title: String
   created: DateTime
 }
 
-input NotificationWhereUniqueInput {
+input AnnouncementWhereUniqueInput {
   id: ID
 }
 
-input NotificationWhereInput {
-  AND: [NotificationWhereInput!]
-  OR: [NotificationWhereInput!]
-  NOT: [NotificationWhereInput!]
+input AnnouncementWhereInput {
+  AND: [AnnouncementWhereInput!]
+  OR: [AnnouncementWhereInput!]
+  NOT: [AnnouncementWhereInput!]
   id: IDFilter
   title: StringFilter
   created: DateTimeNullableFilter
 }
 
-input NotificationOrderByInput {
+input AnnouncementOrderByInput {
   id: OrderDirection
   title: OrderDirection
   created: OrderDirection
 }
 
-input NotificationUpdateInput {
+input AnnouncementUpdateInput {
   title: String
   created: DateTime
 }
 
-input NotificationUpdateArgs {
-  where: NotificationWhereUniqueInput!
-  data: NotificationUpdateInput!
+input AnnouncementUpdateArgs {
+  where: AnnouncementWhereUniqueInput!
+  data: AnnouncementUpdateInput!
 }
 
-input NotificationCreateInput {
+input AnnouncementCreateInput {
   title: String
   created: DateTime
+}
+
+type Student {
+  id: ID!
+  studentId: String
+  email: String
+  name: String
+  photo: ImageFieldOutput
+}
+
+interface ImageFieldOutput {
+  id: ID!
+  filesize: Int!
+  width: Int!
+  height: Int!
+  extension: ImageExtension!
+  ref: String!
+  url: String!
+}
+
+enum ImageExtension {
+  jpg
+  png
+  webp
+  gif
+}
+
+input StudentWhereUniqueInput {
+  id: ID
+  studentId: String
+  email: String
+}
+
+type LocalImageFieldOutput implements ImageFieldOutput {
+  id: ID!
+  filesize: Int!
+  width: Int!
+  height: Int!
+  extension: ImageExtension!
+  ref: String!
+  url: String!
+}
+
+type CloudImageFieldOutput implements ImageFieldOutput {
+  id: ID!
+  filesize: Int!
+  width: Int!
+  height: Int!
+  extension: ImageExtension!
+  ref: String!
+  url: String!
+}
+
+input StudentWhereInput {
+  AND: [StudentWhereInput!]
+  OR: [StudentWhereInput!]
+  NOT: [StudentWhereInput!]
+  id: IDFilter
+  studentId: StringFilter
+  email: StringFilter
+  name: StringFilter
+}
+
+input StudentOrderByInput {
+  id: OrderDirection
+  studentId: OrderDirection
+  email: OrderDirection
+  name: OrderDirection
+}
+
+input StudentUpdateInput {
+  studentId: String
+  email: String
+  name: String
+  photo: ImageFieldInput
+}
+
+input ImageFieldInput {
+  upload: Upload
+  ref: String
+}
+
+"""
+The `Upload` scalar type represents a file upload.
+"""
+scalar Upload
+
+input StudentUpdateArgs {
+  where: StudentWhereUniqueInput!
+  data: StudentUpdateInput!
+}
+
+input StudentCreateInput {
+  studentId: String
+  email: String
+  name: String
+  photo: ImageFieldInput
 }
 
 """
@@ -408,33 +327,30 @@ type Mutation {
   updateUsers(data: [UserUpdateArgs!]!): [User]
   deleteUser(where: UserWhereUniqueInput!): User
   deleteUsers(where: [UserWhereUniqueInput!]!): [User]
-  createPost(data: PostCreateInput!): Post
-  createPosts(data: [PostCreateInput!]!): [Post]
-  updatePost(where: PostWhereUniqueInput!, data: PostUpdateInput!): Post
-  updatePosts(data: [PostUpdateArgs!]!): [Post]
-  deletePost(where: PostWhereUniqueInput!): Post
-  deletePosts(where: [PostWhereUniqueInput!]!): [Post]
-  createTag(data: TagCreateInput!): Tag
-  createTags(data: [TagCreateInput!]!): [Tag]
-  updateTag(where: TagWhereUniqueInput!, data: TagUpdateInput!): Tag
-  updateTags(data: [TagUpdateArgs!]!): [Tag]
-  deleteTag(where: TagWhereUniqueInput!): Tag
-  deleteTags(where: [TagWhereUniqueInput!]!): [Tag]
   createTodo(data: TodoCreateInput!): Todo
   createTodos(data: [TodoCreateInput!]!): [Todo]
   updateTodo(where: TodoWhereUniqueInput!, data: TodoUpdateInput!): Todo
   updateTodos(data: [TodoUpdateArgs!]!): [Todo]
   deleteTodo(where: TodoWhereUniqueInput!): Todo
   deleteTodos(where: [TodoWhereUniqueInput!]!): [Todo]
-  createNotification(data: NotificationCreateInput!): Notification
-  createNotifications(data: [NotificationCreateInput!]!): [Notification]
-  updateNotification(
-    where: NotificationWhereUniqueInput!
-    data: NotificationUpdateInput!
-  ): Notification
-  updateNotifications(data: [NotificationUpdateArgs!]!): [Notification]
-  deleteNotification(where: NotificationWhereUniqueInput!): Notification
-  deleteNotifications(where: [NotificationWhereUniqueInput!]!): [Notification]
+  createAnnouncement(data: AnnouncementCreateInput!): Announcement
+  createAnnouncements(data: [AnnouncementCreateInput!]!): [Announcement]
+  updateAnnouncement(
+    where: AnnouncementWhereUniqueInput!
+    data: AnnouncementUpdateInput!
+  ): Announcement
+  updateAnnouncements(data: [AnnouncementUpdateArgs!]!): [Announcement]
+  deleteAnnouncement(where: AnnouncementWhereUniqueInput!): Announcement
+  deleteAnnouncements(where: [AnnouncementWhereUniqueInput!]!): [Announcement]
+  createStudent(data: StudentCreateInput!): Student
+  createStudents(data: [StudentCreateInput!]!): [Student]
+  updateStudent(
+    where: StudentWhereUniqueInput!
+    data: StudentUpdateInput!
+  ): Student
+  updateStudents(data: [StudentUpdateArgs!]!): [Student]
+  deleteStudent(where: StudentWhereUniqueInput!): Student
+  deleteStudents(where: [StudentWhereUniqueInput!]!): [Student]
   endSession: Boolean!
   authenticateUserWithPassword(
     email: String!
@@ -473,22 +389,6 @@ type Query {
   ): [User!]
   user(where: UserWhereUniqueInput!): User
   usersCount(where: UserWhereInput! = {}): Int
-  posts(
-    where: PostWhereInput! = {}
-    orderBy: [PostOrderByInput!]! = []
-    take: Int
-    skip: Int! = 0
-  ): [Post!]
-  post(where: PostWhereUniqueInput!): Post
-  postsCount(where: PostWhereInput! = {}): Int
-  tags(
-    where: TagWhereInput! = {}
-    orderBy: [TagOrderByInput!]! = []
-    take: Int
-    skip: Int! = 0
-  ): [Tag!]
-  tag(where: TagWhereUniqueInput!): Tag
-  tagsCount(where: TagWhereInput! = {}): Int
   todos(
     where: TodoWhereInput! = {}
     orderBy: [TodoOrderByInput!]! = []
@@ -497,14 +397,22 @@ type Query {
   ): [Todo!]
   todo(where: TodoWhereUniqueInput!): Todo
   todosCount(where: TodoWhereInput! = {}): Int
-  notifications(
-    where: NotificationWhereInput! = {}
-    orderBy: [NotificationOrderByInput!]! = []
+  announcements(
+    where: AnnouncementWhereInput! = {}
+    orderBy: [AnnouncementOrderByInput!]! = []
     take: Int
     skip: Int! = 0
-  ): [Notification!]
-  notification(where: NotificationWhereUniqueInput!): Notification
-  notificationsCount(where: NotificationWhereInput! = {}): Int
+  ): [Announcement!]
+  announcement(where: AnnouncementWhereUniqueInput!): Announcement
+  announcementsCount(where: AnnouncementWhereInput! = {}): Int
+  students(
+    where: StudentWhereInput! = {}
+    orderBy: [StudentOrderByInput!]! = []
+    take: Int
+    skip: Int! = 0
+  ): [Student!]
+  student(where: StudentWhereUniqueInput!): Student
+  studentsCount(where: StudentWhereInput! = {}): Int
   keystone: KeystoneMeta!
   authenticatedItem: AuthenticatedItem
 }
@@ -581,11 +489,6 @@ enum KeystoneAdminUIFieldMetaItemViewFieldMode {
   edit
   read
   hidden
-}
-
-enum QueryMode {
-  default
-  insensitive
 }
 
 type KeystoneAdminUISort {

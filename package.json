@@ -11,12 +11,13 @@
     "devstart": "cross-env SESSION_SECRET='---DEV-COOKIE-SECRET--CHANGE-ME---' keystone start",
     "build": "keystone build && keystone prisma migrate dev",
     "postinstall": "keystone postinstall",
-    "migrate:new": "keystone prisma migrate dev --name init"
+    "migrate:new": "keystone prisma migrate dev --name post"
   },
   "dependencies": {
     "@keystone-6/auth": "^1.0.1",
     "@keystone-6/core": "^1.0.1",
     "@keystone-6/fields-document": "^1.0.1",
+    "pg": "^8.7.3",
     "typescript": "^4.5.4"
   },
   "engines": {
