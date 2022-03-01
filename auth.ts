@@ -10,7 +10,7 @@ For more on auth, check out: https://keystonejs.com/docs/apis/auth#authenticatio
 import { createAuth } from "@keystone-6/auth";
 
 // See https://keystonejs.com/docs/apis/session#session-api for the session docs
-import { storedSessions } from "@keystone-6/core/session";
+import { storedSessions, statelessSessions } from "@keystone-6/core/session";
 import { redisSessionStore } from "@keystone-6/session-store-redis";
 import { createClient } from "redis";
 import { UserRoleType } from ".prisma/client";
@@ -49,6 +49,15 @@ const { withAuth } = createAuth({
 });
 
 // This defines how sessions should work. For more details, check out: https://keystonejs.com/docs/apis/session#session-api
+// const session = statelessSessions({
+//   maxAge: SESSION_MAX_AGE,
+//   secret: sessionSecret!,
+//   // store: redisSessionStore({
+//   //   client: createClient({
+//   //     url: REDIS_URL,
+//   //   }),
+//   // }),
+// });
 const session = storedSessions({
   maxAge: SESSION_MAX_AGE,
   secret: sessionSecret!,
